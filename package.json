@@ -1,51 +1,28 @@
 {
-  "name": "custom_mmm",
+  "name": "mmm_custom",
   "version": "1.0.0",
-  "description": "It is custom mmm package with added functionlity and custom features",
+  "description": "It is customized version of mmm repository with added functionalites and bug fixes",
   "main": "mmm.js",
+  "dependencies": {
+    "hogan.js": "^3.0.2",
+    "techhead-hogan": "^0.0.1"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:dibeesh/mmm_custom.git"
-  },
-  "dependencies": {
-    "techhead-hogan": "*",
-    "hogan.js": "*"
+    "url": "git+https://github.com/dibeesh/mmm_custom.git"
   },
   "keywords": [
-    "mustache",
-    "hogan",
-    "express"
+    "Custom",
+    "mmm"
   ],
-  "author": {
-    "name": "Dibeesh KS, Courtesy Jonathan Hawkes"
-  },
+  "author": "Dibish KS",
   "license": "MIT",
-  "readme": "# mmm\n\n[Mustache](http://mustache.github.com/) Marked Media - View Engine for [Express 3](http://expressjs.com/),\n  featuring [Hogan.js](https://github.com/twitter/hogan.js)\n\nSupports\n\n+ caching\n+ partials\n+ layout\n+ presentation logic (*outside* of logicless template, of course)\n\n## Install\n\n`npm install mmm`\n\n## Usage\n\n### Setup\n\nSee [example/app.js](https://github.com/techhead/mmm/blob/master/example/app.js)\n\nAdd to your app configuration\n\n    app.set('view engine', 'mmm');\n\nAnd if you want caching...\n\n    app.enable('view cache'); // Express 3 will enable this by default for production environments\n\nTo set an app-wide layout...\n\n    app.set('layout', 'responsive-layout'); // will look for a layout named 'responsive-layout.mmm' in 'views' directory\n\nBy default, [mmm](https://github.com/techhead/mmm) prefers the\n[TECHHEAD fork of Hogan.js](https://github.com/techhead/hogan.js).\nHowever, you can control this behaviour at runtime by calling\n`setEngine`, like so:\n\n```\nmmm = require('mmm');\n\n// Use the original fork of Hogan.js\nmmm.setEngine('hogan.js');\n\napp.set('view engine', 'html');\napp.engine('html', mmm.__express);\n```\n\n### Rendering\n\n    app.render('page', // will look for a file named 'page.mmm' in the 'views' directory\n               vars);  // vars is expected to be a hash that will be merged onto app.locals\n\n    // or for a response object (res)\n    res.render('page', vars); // vars will be merged onto res.locals and app.locals\n\nExample:\n\n    app.locals.a = 1;\n    app.locals.b = 1;\n    app.locals.c = 1;\n    res.locals.a = 2;\n    res.locals.b = 2;\n    res.render('page', {a: 3});\n\npage.mmm\n\n```\n{{a}} {{b}} {{c}}\n```\n\nresult:\n\n```\n3 2 1\n```\n\n### Partials\n\nPartials may be explicitly set or automatically loaded from the file system.\n\n    app.set('partials', { header: '<h1>App Name</h1>' }); // Define partial at the app level\n\n    app.render('page', { partials: { menu: '<ul><li>item</li></ul>' } }); // Define partial at render\n\npage.mmm\n\n```\n{{>header}}\n{{>menu}}\n{{>footer}}\n```\n\nfooter.mmm\n\n```\n{{=<% %>=}}\nThis template will be included in page.mmm automatically if {{>footer}} is not otherwise resolved.\n```\n\n### Layout\n\nA layout can be applied either to the entire application or at the call to `render`.\n\n    app.set('layout', 'test');\n\n    // or\n    app.render('page', { layout:'test2' });\n\n    // or\n    app.render('page', { layout:false }); // Turn off layout\n\nLayout is implemented using partials.  A layout should contain a partial named 'content'.\n\n```\nThe content will go here --> {{> content}}\n```\n\n### Presentation Logic\n\nAlthough Mustache provides a framework for logic-less templates, some presentation logic will usually be required\nin order for your view to render correctly.  The 'logic', in this case, is just applied to the model before passing\nit on to the template for rendering, or special view 'helper' methods are attached to the context and these methods\nare called from the template.  But *where* in your code this presentation logic appears is important when trying to\nmaintain a proper SoC (Separation of Concerns) and in conforming to a MVC (Model-View-Controller) architecture.\n\nFor example, consider the following controller:\n\n```\nexports.controller = function(req, res) {\n  var model = { date: new Date() };\n\n  // Presentation Logic: View Helper Example\n  model.formattedDate = function() {\n    return this.date.toLocaleDateString();\n  };\n\n  // Presentation Logic: Pre-format View Model\n  model.isoDate = model.date.toISOString();\n\n  res.render('page', model);\n};\n```\n\nThis example is muddled because presentation logic (part of the View in MVC) is being add to the Controller.\nThe Mustache Marked Media module (mmm) has an established pattern for \"binding\" such presentation logic to your\nview.  Its use is, of course, completely optional.  See the following example.\n\npage.mmm\n\n```\nToday's date is {{formattedDate}}.\n```\n\npage.mmm.js\n\n```\nexports.formattedDate = function() {\n  return this.date.toLocaleDateString();\n};\n```\n\n... or alternatively ...\n\npage.mmm.js\n\n```\nmodule.exports = function(context) {\n  context.formattedDate = context.date.toISOString();\n  return context;\n};\n```\n",
-  "_id": "mmm@0.2.2",
-  "dist": {
-    "shasum": "33af5da639a47e218f672a6d8622c62e286f8d7d",
-    "tarball": "https://registry.npmjs.org/mmm/-/mmm-0.2.2.tgz"
-  },
-  "_npmVersion": "1.1.59",
-  "_npmUser": {
-    "name": "Dibish",
-    "email": "dibishks_607@yahoo.co.in"
-  },
-  "maintainers": [
-    {
-      "name": "Dibish",
-      "email": "dibishks_607@yahoo.co.in"
-    }
-  ],
-  "directories": {},
-  "_shasum": "33af5da639a47e218f672a6d8622c62e286f8d7d",
-  "_resolved": "http://registry.npmjs.org/mmm/-/mmm-0.2.2.tgz",
-  "_from": "mmm@>=0.2.2 <0.3.0",
   "bugs": {
     "url": "https://github.com/dibeesh/mmm_custom/issues"
   },
-  "homepage": "https://github.com/dibeesh/mmm_custom/"
+  "homepage": "https://github.com/dibeesh/mmm_custom#readme"
 }
