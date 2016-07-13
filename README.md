@@ -1,3 +1,6 @@
+It is custom mmm module derived from original https://github.com/techhead/mmm
+
+
 # mmm
 
 [Mustache](http://mustache.github.com/) Marked Media - View Engine for [Express 3](http://expressjs.com/),
